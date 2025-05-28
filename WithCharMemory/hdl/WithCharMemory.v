@@ -7,7 +7,7 @@ module WithCharMemory (
 		output reg  [5:0] red, green, blue,
 		output wire [7:0] led,
 		input  wire [7:0] dip
-	);
+);
 
 
 // video structure constants
@@ -34,13 +34,25 @@ reg  [7:0] char_out;
 wire [31:0] char_gfx;
 fontrom fr(char_out, char_gfx);
 
+wire vid_mem_rw;
+wire [7:0] vid_ch_out, vid_ch_in;
+
+assign vid_mem_rw = 0;
+assign vid_ch_in = 8'd0;
+
+wire [5:0] vm_red, vm_green, vm_blue;
+
+videomem2 vm2(
+	px_h, px_v,
+    vid_ch_in, vid_mem_rw, clk, // write to video memory... not so sure about this 
+    vm_red, vm_green, vm_blue
+);
+
+
 
 wire clr;
 assign clr = dip[7];
 
-reg [10:0] timer; //  2047
-
-//assign led = dip;
 assign led = char_out;
 
 // Horizontal & vertical counters --
@@ -77,16 +89,6 @@ begin
 				vc <= vc + 1;
 			else begin
 				vc <= 0;		
-				timer <= timer + 1;
-				// timer expired, inc char
-				if(7 <= timer) begin
-					char_out <= char_out + 1;
-					timer <= 0;
-
-					if(127 <= char_out) begin
-						char_out <= 0;
-					end
-				end
 			end
 		end
 	end
@@ -106,190 +108,18 @@ assign v_sync = (vc < vpulse) ? 0:1;
 wire [9:0] px_v, px_h;
 
 assign px_v =  vc - vbp; 
-
-// hc is 0 -> 800, should be 0 -> 640,
 assign px_h =  hc - hbp;
 
 always @(*) begin
 	if (vc >= vbp && vc < vfp) begin
-		// if ( px_h >= 0 && px_h < 4 && px_v >= 0 && px_v < 8 ) begin	
-		// 	red =   6'b111111;
-		// 	green = 6'b111111;
-		// 	blue =  6'b111111;
-		// end 
-
-		if ( px_h == 0 && px_v == 0) begin	
-			red = char_gfx[0] == 1 ? 6'b111111 : 6'b000000; 
-			green = char_gfx[0] == 1 ? 6'b111111 : 6'b000000; 
-			blue = char_gfx[0] == 1 ? 6'b111111 : 6'b000000; 
-		end 
-		else if ( px_h == 1 && px_v == 0) begin	
-			red = char_gfx[1] == 1 ? 6'b111111 : 6'b000000; 
-			green = char_gfx[1] == 1 ? 6'b111111 : 6'b000000; 
-			blue = char_gfx[1] == 1 ? 6'b111111 : 6'b000000; 
-		end 
-		else if ( px_h == 2 && px_v == 0) begin	
-			red = char_gfx[2] == 1 ? 6'b111111 : 6'b000000; 
-			green = char_gfx[2] == 1 ? 6'b111111 : 6'b000000; 
-			blue = char_gfx[2] == 1 ? 6'b111111 : 6'b000000; 
-		end 
-		else if ( px_h == 3 && px_v == 0) begin	
-			red = char_gfx[3] == 1 ? 6'b111111 : 6'b000000; 
-			green = char_gfx[3] == 1 ? 6'b111111 : 6'b000000; 
-			blue = char_gfx[3] == 1 ? 6'b111111 : 6'b000000; 
-		
-		end else if ( px_h == 0 && px_v == 1) begin	
-			red = char_gfx[4] == 1 ? 6'b111111 : 6'b000000; 
-			green = char_gfx[4] == 1 ? 6'b111111 : 6'b000000; 
-			blue = char_gfx[4] == 1 ? 6'b111111 : 6'b000000; 
-		end 
-		else if ( px_h == 1 && px_v == 1) begin	
-			red = char_gfx[5] == 1 ? 6'b111111 : 6'b000000; 
-			green = char_gfx[5] == 1 ? 6'b111111 : 6'b000000; 
-			blue = char_gfx[5] == 1 ? 6'b111111 : 6'b000000; 
-		end 
-		else if ( px_h == 2 && px_v == 1) begin	
-			red = char_gfx[6] == 1 ? 6'b111111 : 6'b000000; 
-			green = char_gfx[6] == 1 ? 6'b111111 : 6'b000000; 
-			blue = char_gfx[6] == 1 ? 6'b111111 : 6'b000000; 
-		end 
-		else if ( px_h == 3 && px_v == 1) begin	
-			red = char_gfx[7] == 1 ? 6'b111111 : 6'b000000; 
-			green = char_gfx[7] == 1 ? 6'b111111 : 6'b000000; 
-			blue = char_gfx[7] == 1 ? 6'b111111 : 6'b000000; 
-		end 
-		else if ( px_h == 0 && px_v == 2) begin	
-			red = char_gfx[8] == 1 ? 6'b111111 : 6'b000000; 
-			green = char_gfx[8] == 1 ? 6'b111111 : 6'b000000; 
-			blue = char_gfx[8] == 1 ? 6'b111111 : 6'b000000; 
-		end 
-		else if ( px_h == 1 && px_v == 2) begin	
-			red = char_gfx[9] == 1 ? 6'b111111 : 6'b000000; 
-			green = char_gfx[9] == 1 ? 6'b111111 : 6'b000000; 
-			blue = char_gfx[9] == 1 ? 6'b111111 : 6'b000000; 
-		end 
-		else if ( px_h == 2 && px_v == 2) begin	
-			red = char_gfx[10] == 1 ? 6'b111111 : 6'b000000; 
-			green = char_gfx[10] == 1 ? 6'b111111 : 6'b000000; 
-			blue = char_gfx[10] == 1 ? 6'b111111 : 6'b000000; 
-		end 
-		else if ( px_h == 3 && px_v == 2) begin	
-			red = char_gfx[11] == 1 ? 6'b111111 : 6'b000000; 
-			green = char_gfx[11] == 1 ? 6'b111111 : 6'b000000; 
-			blue = char_gfx[11] == 1 ? 6'b111111 : 6'b000000; 
-		end 
-		else if ( px_h == 0 && px_v == 3) begin	
-			red = char_gfx[12] == 1 ? 6'b111111 : 6'b000000; 
-			green = char_gfx[12] == 1 ? 6'b111111 : 6'b000000; 
-			blue = char_gfx[12] == 1 ? 6'b111111 : 6'b000000; 
-		end 
-		else if ( px_h == 1 && px_v == 3) begin	
-			red = char_gfx[13] == 1 ? 6'b111111 : 6'b000000; 
-			green = char_gfx[13] == 1 ? 6'b111111 : 6'b000000; 
-			blue = char_gfx[13] == 1 ? 6'b111111 : 6'b000000; 
-		end 
-		else if ( px_h == 2 && px_v == 3) begin	
-			red = char_gfx[14] == 1 ? 6'b111111 : 6'b000000; 
-			green = char_gfx[14] == 1 ? 6'b111111 : 6'b000000; 
-			blue = char_gfx[14] == 1 ? 6'b111111 : 6'b000000; 
-		end 
-		else if ( px_h == 3 && px_v == 3) begin	
-			red = char_gfx[15] == 1 ? 6'b111111 : 6'b000000; 
-			green = char_gfx[15] == 1 ? 6'b111111 : 6'b000000; 
-			blue = char_gfx[15] == 1 ? 6'b111111 : 6'b000000; 
-		end 
-		else if ( px_h == 0 && px_v == 4) begin	
-			red = char_gfx  [16] == 1 ? 6'b111111 : 6'b000000; 
-			green = char_gfx[16] == 1 ? 6'b111111 : 6'b000000; 
-			blue = char_gfx [16] == 1 ? 6'b111111 : 6'b000000; 
-		end 
-		else if ( px_h == 1 && px_v == 4) begin	
-			red = char_gfx   [17] == 1 ? 6'b111111 : 6'b000000; 
-			green = char_gfx [17] == 1 ? 6'b111111 : 6'b000000; 
-			blue = char_gfx  [17] == 1 ? 6'b111111 : 6'b000000; 
-		end 
-		else if ( px_h == 2 && px_v == 4) begin	
-			red = char_gfx  [18] == 1 ? 6'b111111 : 6'b000000; 
-			green = char_gfx[18] == 1 ? 6'b111111 : 6'b000000; 
-			blue = char_gfx [18] == 1 ? 6'b111111 : 6'b000000; 
-		end 
-		else if ( px_h == 3 && px_v == 4) begin	
-			red = char_gfx  [19] == 1 ? 6'b111111 : 6'b000000; 
-			green = char_gfx[19] == 1 ? 6'b111111 : 6'b000000; 
-			blue = char_gfx [19] == 1 ? 6'b111111 : 6'b000000; 
-		end 
-		else if ( px_h == 0 && px_v == 5) begin	
-			red = char_gfx  [20] == 1 ? 6'b111111 : 6'b000000; 
-			green = char_gfx[20] == 1 ? 6'b111111 : 6'b000000; 
-			blue = char_gfx [20] == 1 ? 6'b111111 : 6'b000000; 
-		end 
-		else if ( px_h == 1 && px_v == 5) begin	
-			red = char_gfx   [21] == 1 ? 6'b111111 : 6'b000000; 
-			green = char_gfx [21] == 1 ? 6'b111111 : 6'b000000; 
-			blue = char_gfx  [21] == 1 ? 6'b111111 : 6'b000000; 
-		end 
-		else if ( px_h == 2 && px_v == 5) begin	
-			red = char_gfx  [22] == 1 ? 6'b111111 : 6'b000000; 
-			green = char_gfx[22] == 1 ? 6'b111111 : 6'b000000; 
-			blue = char_gfx [22] == 1 ? 6'b111111 : 6'b000000; 
-		end 
-		else if ( px_h == 3 && px_v == 5) begin	
-			red = char_gfx  [23] == 1 ? 6'b111111 : 6'b000000; 
-			green = char_gfx[23] == 1 ? 6'b111111 : 6'b000000; 
-			blue = char_gfx [23] == 1 ? 6'b111111 : 6'b000000; 
-		end 
-		else if ( px_h == 0 && px_v == 6) begin	
-			red = char_gfx  [24] == 1 ? 6'b111111 : 6'b000000; 
-			green = char_gfx[24] == 1 ? 6'b111111 : 6'b000000; 
-			blue = char_gfx [24] == 1 ? 6'b111111 : 6'b000000; 
-		end 
-		else if ( px_h == 1 && px_v == 6) begin	
-			red = char_gfx   [25] == 1 ? 6'b111111 : 6'b000000; 
-			green = char_gfx [25] == 1 ? 6'b111111 : 6'b000000; 
-			blue = char_gfx  [25] == 1 ? 6'b111111 : 6'b000000; 
-		end 
-		else if ( px_h == 2 && px_v == 6) begin	
-			red = char_gfx  [26] == 1 ? 6'b111111 : 6'b000000; 
-			green = char_gfx[26] == 1 ? 6'b111111 : 6'b000000; 
-			blue = char_gfx [26] == 1 ? 6'b111111 : 6'b000000; 
-		end 
-		else if ( px_h == 3 && px_v == 6) begin	
-			red = char_gfx  [27] == 1 ? 6'b111111 : 6'b000000; 
-			green = char_gfx[27] == 1 ? 6'b111111 : 6'b000000; 
-			blue = char_gfx [27] == 1 ? 6'b111111 : 6'b000000; 
-		end 
-		else if ( px_h == 0 && px_v == 7) begin	
-			red = char_gfx  [28] == 1 ? 6'b111111 : 6'b000000; 
-			green = char_gfx[28] == 1 ? 6'b111111 : 6'b000000; 
-			blue = char_gfx [28] == 1 ? 6'b111111 : 6'b000000; 
-		end 
-		else if ( px_h == 1 && px_v == 7) begin	
-			red = char_gfx   [29] == 1 ? 6'b111111 : 6'b000000; 
-			green = char_gfx [29] == 1 ? 6'b111111 : 6'b000000; 
-			blue = char_gfx  [29] == 1 ? 6'b111111 : 6'b000000; 
-		end 
-		else if ( px_h == 2 && px_v == 7) begin	
-			red = char_gfx  [30] == 1 ? 6'b111111 : 6'b000000; 
-			green = char_gfx[30] == 1 ? 6'b111111 : 6'b000000; 
-			blue = char_gfx [30] == 1 ? 6'b111111 : 6'b000000; 
-		end 
-		else if ( px_h == 3 && px_v == 7) begin	
-			red = char_gfx  [31] == 1 ? 6'b111111 : 6'b000000; 
-			green = char_gfx[31] == 1 ? 6'b111111 : 6'b000000; 
-			blue = char_gfx [31] == 1 ? 6'b111111 : 6'b000000; 
-		end 
-		else begin
-			red =   6'b000000;
-			green = 6'b000000;
-			blue =  6'b000000;
-		end 
-
+		red   = vm_red;
+		green = vm_green;
+		blue  = vm_blue;
 	end else begin
-		red =   6'b000000;
-		green = 6'b000000;
-		blue =  6'b000000;
+		red   = 8'd0;
+		green = 8'd0;
+		blue  = 8'd0;
 	end
 end
-
 
 endmodule
