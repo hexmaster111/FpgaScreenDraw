@@ -2,7 +2,7 @@
 
 int main()
 {
-    const char *str = "Hello World";
+    const char *str = "Welcome to the Rotting 20s";
 
     for (const char* c = str; (*c) != 0; c++)
     {
