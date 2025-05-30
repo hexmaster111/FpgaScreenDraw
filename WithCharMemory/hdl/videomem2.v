@@ -28,9 +28,9 @@ wire  [7:0] char_out;
 wire [31:0] char_gfx;
 fontrom fr(char_out, char_gfx);
 
-// and there is something wrong with this math too that i dont quite undersand....
-// assign char_out = vmem [(vm_py / CH_WIDTH) * CH_HEIGHT + (vm_px / CH_HEIGHT)];
-assign char_out = 8'd19;
+
+assign char_out = vmem [(vm_py / CH_HEIGHT) * CH_WIDTH_SCREEN + (vm_px / CH_WIDTH)];
+// assign char_out = 8'd87;
 assign debug_curr_ch_out = char_out;
 //abcdefghijklmnopqrstuvwxyz
 
@@ -42,13 +42,9 @@ r g b = bit ? 1 : 0
 
                 int bit = (gfx >> (y * 4 + x)) & 1; 
 */
-assign vm_r = char_gfx[(vm_py * CH_WIDTH) + vm_px] ? 6'b111111 : 6'b000000;
-
-// assign vm_g = char_gfx[(vm_py / CH_HEIGHT) * CH_WIDTH + (vm_px / CH_WIDTH)] ? 6'b111111 : 6'b000000;
-// assign vm_b = char_gfx[(vm_py / CH_HEIGHT) * CH_WIDTH + (vm_px / CH_WIDTH)] ? 6'b111111 : 6'b000000;
-
-always @(posedge write_clk) begin
-end
+assign vm_r = char_gfx[((vm_py % CH_HEIGHT) * CH_WIDTH) + (vm_px % CH_WIDTH)] ? 6'b111111 : 6'b000000;
+assign vm_g = char_gfx[((vm_py % CH_HEIGHT) * CH_WIDTH) + (vm_px % CH_WIDTH)] ? 6'b111111 : 6'b000000;
+assign vm_b = char_gfx[((vm_py % CH_HEIGHT) * CH_WIDTH) + (vm_px % CH_WIDTH)] ? 6'b111111 : 6'b000000;
 
 always @(posedge write_clk) begin
     if(vm_ch_write_enable == 1'b1) begin // write
@@ -56,47 +52,41 @@ always @(posedge write_clk) begin
     end
 end
 
-
+integer i;
 initial begin
+    for (i = 0; i < CH_SCREENSIZE; i = i + 1) begin
+        vmem[i] = 8'd32; // ASCII for space ' '
+    end
 
-    vmem [0] = 8'd87; 
-    vmem [1] = 8'd101; 
-    vmem [2] = 8'd108; 
-    vmem [3] = 8'd99; 
-    vmem [4] = 8'd111; 
-    vmem [5] = 8'd109; 
-    vmem [6] = 8'd101; 
-    vmem [7] = 8'd32; 
-    vmem [8] = 8'd116; 
-    vmem [9] = 8'd111; 
-    vmem [10] = 8'd32; 
-    vmem [11] = 8'd116; 
-    vmem [12] = 8'd104; 
-    vmem [13] = 8'd101; 
-    vmem [14] = 8'd32; 
-    vmem [15] = 8'd82; 
-    vmem [16] = 8'd111; 
-    vmem [17] = 8'd116; 
-    vmem [18] = 8'd116; 
-    vmem [19] = 8'd105; 
-    vmem [21] = 8'd110; 
-    vmem [22] = 8'd103; 
-    vmem [23] = 8'd32; 
-    vmem [24] = 8'd50; 
-    vmem [25] = 8'd48; 
-    vmem [26] = 8'd115;
-    vmem [27] = 8'd0;
+    vmem [1200 + 0] = 8'd87; 
+    vmem [1200 + 1] = 8'd101; 
+    vmem [1200 + 2] = 8'd108; 
+    vmem [1200 + 3] = 8'd99; 
+    vmem [1200 + 4] = 8'd111; 
+    vmem [1200 + 5] = 8'd109; 
+    vmem [1200 + 6] = 8'd101; 
+    vmem [1200 + 7] = 8'd32; 
+    vmem [1200 + 8] = 8'd116; 
+    vmem [1200 + 9] = 8'd111; 
+    vmem [1200 + 10] = 8'd32; 
+    vmem [1200 + 11] = 8'd116; 
+    vmem [1200 + 12] = 8'd104; 
+    vmem [1200 + 13] = 8'd101; 
+    vmem [1200 + 14] = 8'd32; 
+    vmem [1200 + 15] = 8'd82; 
+    vmem [1200 + 16] = 8'd111; 
+    vmem [1200 + 17] = 8'd116; 
+    vmem [1200 + 18] = 8'd116;
+    vmem [1200 + 19] = 8'd105;
+    vmem [1200 + 20] = 8'd110;
+    vmem [1200 + 21] = 8'd103;
+    vmem [1200 + 22] = 8'd32; 
+    vmem [1200 + 23] = 8'd50; 
+    vmem [1200 + 24] = 8'd48; 
+    vmem [1200 + 25] = 8'd115;
 
-    // VVVVVVVV Test Data VVVVVVVVV
-    vmem [28] = 8'd32;
-    vmem [29] = 8'd87;
-    vmem [30] = 8'd111;
-    vmem [31] = 8'd114;
-    vmem [32] = 8'd108;
-    vmem [33] = 8'd100;
-
-    vmem [100] = 8'b11111111;
-
+    vmem [CH_SCREENSIZE-1] = 8'b11111111;
+    vmem [CH_SCREENSIZE-3] = 8'b11111110;
 
 end
 

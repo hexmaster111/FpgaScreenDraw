@@ -23,8 +23,6 @@ parameter vfp = 511; 	// beginning of vertical front porch
 // active vertical video is therefore: 511 - 31 = 480
 
 
-
-
 // registers for storing the horizontal & vertical counters
 reg [9:0] hc;
 reg [9:0] vc;

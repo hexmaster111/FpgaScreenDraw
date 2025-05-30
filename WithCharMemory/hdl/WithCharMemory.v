@@ -1,12 +1,14 @@
 /* verilator lint_off UNDRIVEN */
 /* verilator lint_off UNUSEDSIGNAL */
 /* verilator lint_off UNUSEDPARAM */
+
 module WithCharMemory (  
 		input  wire clk, // should be 25Mhz, we have 21.4 tho...
 		output wire v_sync, h_sync,
 		output reg  [5:0] red, green, blue,
 		output wire [7:0] led,
-		input  wire [7:0] dip
+		input  wire [7:0] dip,
+		output wire [9:0] dhc, dvc 
 );
 
 
@@ -23,8 +25,9 @@ parameter vfp = 511; 	// beginning of vertical front porch
 // active vertical video is therefore: 511 - 31 = 480
 
 // registers for storing the horizontal & vertical counters
-reg [9:0] hc;
-reg [9:0] vc;
+reg [9:0] hc, vc; // just for debugging
+assign dhc = hc;
+assign dvc = vc;
 
 wire vid_mem_rw;
 wire [7:0] vid_ch_out, vid_ch_in;
@@ -52,9 +55,6 @@ videomem2 vm2(
 // Assignment statements can only be used on type "reg" and need to be of the "non-blocking" type: <=
 always @(posedge clk)
 begin
-	// v---33
-	// A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
-	// reset condition
 
 	// keep counting until the end of the line
 	if (hc < hpixels - 1)
@@ -91,7 +91,7 @@ assign px_v =  vc - vbp;
 assign px_h =  hc - hbp;
 
 always @(*) begin
-	if (vc >= vbp && vc < vfp) begin
+	if (vc >= vbp && vc < vfp && hc >= hbp && hc < hfp) begin
 		red   = vm_red;
 		green = vm_green;
 		blue  = vm_blue;
