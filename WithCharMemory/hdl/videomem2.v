@@ -5,7 +5,8 @@ module videomem2 (
     input  wire [9:0] vm_px, vm_py, // px being scanned right now
     input  wire [7:0] vm_ch_in,
     input  wire       vm_ch_write_enable, write_clk,
-    output wire [5:0] vm_r, vm_g, vm_b // output rgb colors
+    output wire [5:0] vm_r, vm_g, vm_b, // output rgb colors
+    output wire [7:0] debug_curr_ch_out
 );
 
 parameter DISP_WIDTH_PX  = 640;
@@ -21,6 +22,41 @@ parameter CH_SCREENSIZE = CH_WIDTH_SCREEN * CH_HEIGHT_SCREEN;
   //   4 x   8 px char size
   //      9600 chars in video memory
 reg [7:0] vmem [CH_SCREENSIZE-1:0]; // 9600x  8 bit values
+
+
+wire  [7:0] char_out;
+wire [31:0] char_gfx;
+fontrom fr(char_out, char_gfx);
+
+// and there is something wrong with this math too that i dont quite undersand....
+// assign char_out = vmem [(vm_py / CH_WIDTH) * CH_HEIGHT + (vm_px / CH_HEIGHT)];
+assign char_out = 8'd19;
+assign debug_curr_ch_out = char_out;
+//abcdefghijklmnopqrstuvwxyz
+
+/*
+char_x_px = vm_px / CH_WIDTH;
+char_y_px = vm_py / CH_HEIGHT;
+bit = char_y_px * CH_WIDTH + char_x_px;
+r g b = bit ? 1 : 0
+
+                int bit = (gfx >> (y * 4 + x)) & 1; 
+*/
+assign vm_r = char_gfx[(vm_py * CH_WIDTH) + vm_px] ? 6'b111111 : 6'b000000;
+
+// assign vm_g = char_gfx[(vm_py / CH_HEIGHT) * CH_WIDTH + (vm_px / CH_WIDTH)] ? 6'b111111 : 6'b000000;
+// assign vm_b = char_gfx[(vm_py / CH_HEIGHT) * CH_WIDTH + (vm_px / CH_WIDTH)] ? 6'b111111 : 6'b000000;
+
+always @(posedge write_clk) begin
+end
+
+always @(posedge write_clk) begin
+    if(vm_ch_write_enable == 1'b1) begin // write
+        // todo : write into vmem
+    end
+end
+
+
 initial begin
 
     vmem [0] = 8'd87; 
@@ -58,21 +94,10 @@ initial begin
     vmem [31] = 8'd114;
     vmem [32] = 8'd108;
     vmem [33] = 8'd100;
-end
 
-reg  [7:0] char_out;
-wire [31:0] char_gfx;
-fontrom fr(char_out, char_gfx);
+    vmem [100] = 8'b11111111;
 
-assign char_out = vmem [(vm_py / CH_WIDTH) * CH_HEIGHT + (vm_px / CH_HEIGHT)];
 
-// always @(posedge write_clk) begin
-// end
-
-always @(posedge write_clk) begin
-    if(vm_ch_write_enable == 1'b1) begin // write
-        // todo : write into vmem
-    end
 end
 
 endmodule

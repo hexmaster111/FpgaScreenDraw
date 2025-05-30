@@ -37,7 +37,8 @@ wire [5:0] vm_red, vm_green, vm_blue;
 videomem2 vm2(
 	px_h, px_v,
     vid_ch_in, vid_mem_rw, clk, // write to video memory... not so sure about this 
-    vm_red, vm_green, vm_blue
+    vm_red, vm_green, vm_blue,
+	led
 );
 
 
