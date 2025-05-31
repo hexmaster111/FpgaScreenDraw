@@ -1,5 +1,10 @@
 I have a OneChipBook that i have been using to learn to program fpgas, i got a char generator and a hacked to geather font curcuit working for drawing one char
 
+# Update
+Ive learned much more
+![Screenshot of simulator](simulator_withcharmem.png)
+
+
 ![Gif of chars](chars.gif)
 
 Eventualy i want to figure out how to draw like a string of thease badboys along the monitor. 
