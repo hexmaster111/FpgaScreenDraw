@@ -16,6 +16,8 @@
 // #include "circuit_tools.h"
 #endif // GRAPHICAL_TB
 
+int g_fontsize = 12;
+
 #define RUNTIME (5000000)
 #define rgb(r, g, b) (Color){r, g, b, 255}
 
@@ -30,6 +32,10 @@ void CreateWaveFormVcd(int argc, char *argv[])
 	m_dut->trace(m_trace, 5);
 	m_trace->open("waveform.vcd");
 
+	m_dut->vid_ch_in = 'A';
+	m_dut->vid_ch_addr = 0;
+	m_dut->vid_mem_we = 1;
+
 	for (size_t i = 0; i < RUNTIME; i++)
 	{
 		m_dut->eval();
@@ -43,7 +49,6 @@ void CreateWaveFormVcd(int argc, char *argv[])
 	delete m_trace;
 }
 
-float g_fontsize = 12;
 
 struct VgaTv
 {
@@ -87,30 +92,38 @@ int main(int argc, char *argv[])
 	VgaTv tv = new_tv(800, 521);
 	Vvideo_controller *dut = new Vvideo_controller;
 
+	// const char *clocking_in_word = "hello, world";
+
+	u_char letter = 'A';
+	uint position = 0;
+	bool write = false;
+
+
 	bool go = false;
 	while (!WindowShouldClose())
 	{
-
 		if (IsKeyPressed(KEY_S) || IsKeyDown(KEY_SPACE) || IsKeyDown(KEY_F) || go)
 		{
 			BeginTextureMode(tv.texture);
-			// CaptureTv(&tv, dut->clk, dut->red * 4, dut->green * 4, dut->blue * 4, dut->dhc, dut->dvc);
-			EndTextureMode();
-
+			CaptureTv(&tv, dut->clk, dut->red * 4, dut->green * 4, dut->blue * 4, dut->dhc, dut->dvc);
 			dut->eval();
 			dut->clk = !dut->clk;
+
+			EndTextureMode();
 		}
 
 		if (IsKeyDown(KEY_W))
 		{
 			BeginTextureMode(tv.texture);
 
-			float doneat = GetTime() + 1.0f / 60.0f;
+			float doneat = GetTime() + 1.0f / 120.0f;
 			for (size_t i = 0; i < (800 * 2) * 521; i++)
 			{
+
 				CaptureTv(&tv, dut->clk, dut->red * 4, dut->green * 4, dut->blue * 4, dut->dhc, dut->dvc);
 				dut->eval();
 				dut->clk = !dut->clk;
+
 				if (GetTime() > doneat)
 					break;
 			}
@@ -127,8 +140,23 @@ int main(int argc, char *argv[])
 
 		if (!IsKeyDown(KEY_F))
 		{
-			DrawTv(tv, 10, 10);
+			DrawTv(tv, 10, 48);
 		}
+
+		DrawText(TextFormat("Letter : %c, Pos : %4d, We : %d", letter, position, write), 0, 0, 16, BLACK);
+		DrawText("o=toggle_write u=letter up j=letter down i=pos up k=posdown", 0, 16, 16, BLACK);
+
+		if(IsKeyPressed(KEY_J) || IsKeyPressedRepeat(KEY_J)) letter -= 1;
+		if(IsKeyPressed(KEY_U) || IsKeyPressedRepeat(KEY_U)) letter += 1;
+		if(IsKeyPressed(KEY_K) || IsKeyPressedRepeat(KEY_K)) position -= 1;
+		if(IsKeyPressed(KEY_I) || IsKeyPressedRepeat(KEY_I)) position += 1;
+		if(IsKeyPressed(KEY_O)) write = !write;
+	
+		dut->vid_ch_in = letter;
+		dut->vid_ch_addr = position;
+		dut->vid_mem_we = write;
+
+
 
 		// Toolbar
 		DrawRectangle(0, GetScreenHeight() - g_fontsize, GetScreenWidth(), g_fontsize, rgb(238, 232, 213));

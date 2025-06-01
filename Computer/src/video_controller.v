@@ -10,9 +10,10 @@ module video_controller (
 		// ---- CONTROL ---- //
 		input wire vid_mem_we, // write enable
 		input wire [7:0]  vid_ch_in, // char to write
+		input wire[12:0]  vid_ch_addr,
 
 
-		output reg [9:0] dhc, dvc 
+		output wire [9:0] dhc, dvc 
 );
 
 
@@ -39,7 +40,7 @@ wire [5:0] vm_red, vm_green, vm_blue;
 video_mem vm2(
 	px_h, px_v,
     vm_red, vm_green, vm_blue,
-    vid_ch_in, vid_mem_we, clk
+    vid_ch_in, vid_ch_addr, vid_mem_we, clk
 );
 
 

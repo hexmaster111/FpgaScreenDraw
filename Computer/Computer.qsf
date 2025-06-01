@@ -51,26 +51,26 @@ set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
 set_global_assignment -name STRATIX_DEVICE_IO_STANDARD "3.3-V LVTTL"
-set_location_assignment PIN_75 -to h_sync
-set_location_assignment PIN_74 -to v_sync
-set_location_assignment PIN_84 -to blue[5]
-set_location_assignment PIN_83 -to blue[4]
-set_location_assignment PIN_82 -to blue[3]
-set_location_assignment PIN_79 -to blue[2]
-set_location_assignment PIN_78 -to blue[1]
-set_location_assignment PIN_77 -to blue[0]
-set_location_assignment PIN_94 -to green[5]
-set_location_assignment PIN_93 -to green[4]
-set_location_assignment PIN_88 -to green[3]
-set_location_assignment PIN_87 -to green[2]
-set_location_assignment PIN_86 -to green[1]
-set_location_assignment PIN_85 -to green[0]
-set_location_assignment PIN_104 -to red[5]
-set_location_assignment PIN_101 -to red[4]
-set_location_assignment PIN_100 -to red[3]
-set_location_assignment PIN_99 -to red[2]
-set_location_assignment PIN_98 -to red[1]
-set_location_assignment PIN_95 -to red[0]
+set_location_assignment PIN_75 -to vga_h_sync
+set_location_assignment PIN_74 -to vga_v_sync
+set_location_assignment PIN_84 -to vga_blue[5]
+set_location_assignment PIN_83 -to vga_blue[4]
+set_location_assignment PIN_82 -to vga_blue[3]
+set_location_assignment PIN_79 -to vga_blue[2]
+set_location_assignment PIN_78 -to vga_blue[1]
+set_location_assignment PIN_77 -to vga_blue[0]
+set_location_assignment PIN_94 -to vga_green[5]
+set_location_assignment PIN_93 -to vga_green[4]
+set_location_assignment PIN_88 -to vga_green[3]
+set_location_assignment PIN_87 -to vga_green[2]
+set_location_assignment PIN_86 -to vga_green[1]
+set_location_assignment PIN_85 -to vga_green[0]
+set_location_assignment PIN_104 -to vga_red[5]
+set_location_assignment PIN_101 -to vga_red[4]
+set_location_assignment PIN_100 -to vga_red[3]
+set_location_assignment PIN_99 -to vga_red[2]
+set_location_assignment PIN_98 -to vga_red[1]
+set_location_assignment PIN_95 -to vga_red[0]
 set_location_assignment PIN_50 -to led[7]
 set_location_assignment PIN_49 -to led[6]
 set_location_assignment PIN_48 -to led[5]
@@ -90,7 +90,6 @@ set_location_assignment PIN_53 -to dip[0]
 set_location_assignment PIN_28 -to clk
 set_global_assignment -name VERILOG_FILE src/video_mem.v
 set_global_assignment -name VERILOG_FILE src/video_controller.v
-set_global_assignment -name VERILOG_FILE src/video.v
 set_global_assignment -name VERILOG_FILE src/video_fontrom.v
 set_global_assignment -name VERILOG_FILE src/Computer.v
 set_global_assignment -name CDF_FILE ../../Documents/Chain1.cdf
