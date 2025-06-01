@@ -6,9 +6,13 @@ module video_controller (
 		input  wire clk, // should be 25Mhz, we have 21.4 tho...
 		// ---- VGA SIGNAL ---- //
 		output wire v_sync, h_sync, 
-		output reg  [5:0] red, green, blue
+		output reg  [5:0] red, green, blue,
 		// ---- CONTROL ---- //
-		 
+		input wire vid_mem_we, // write enable
+		input wire [7:0]  vid_ch_in, // char to write
+
+
+		output reg [9:0] dhc, dvc 
 );
 
 
@@ -26,19 +30,16 @@ parameter vfp = 511; 	// beginning of vertical front porch
 
 // registers for storing the horizontal & vertical counters
 reg [9:0] hc, vc; 
+assign dhc = hc;
+assign dvc = vc;
 
-wire vid_mem_rw;
-wire [7:0] vid_ch_out, vid_ch_in;
-
-assign vid_mem_rw = 0;
-assign vid_ch_in = 8'd0;
 
 wire [5:0] vm_red, vm_green, vm_blue;
 
 video_mem vm2(
 	px_h, px_v,
     vm_red, vm_green, vm_blue,
-    vid_ch_in, vid_mem_rw, clk
+    vid_ch_in, vid_mem_we, clk
 );
 
 

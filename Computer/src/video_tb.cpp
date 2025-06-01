@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
 			float doneat = GetTime() + 1.0f / 60.0f;
 			for (size_t i = 0; i < (800 * 2) * 521; i++)
 			{
-				// CaptureTv(&tv, dut->clk, dut->red * 4, dut->green * 4, dut->blue * 4, dut->dhc, dut->dvc);
+				CaptureTv(&tv, dut->clk, dut->red * 4, dut->green * 4, dut->blue * 4, dut->dhc, dut->dvc);
 				dut->eval();
 				dut->clk = !dut->clk;
 				if (GetTime() > doneat)
