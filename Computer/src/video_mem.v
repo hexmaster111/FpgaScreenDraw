@@ -1,7 +1,7 @@
 /* verilator lint_off UNDRIVEN */
 /* verilator lint_off UNUSEDSIGNAL */
 /* verilator lint_off UNUSEDPARAM */
-module videomem2 (
+module video_mem (
     input  wire [9:0] vm_px, vm_py, // px being scanned right now
     input  wire [7:0] vm_ch_in,
     input  wire       vm_ch_write_enable, write_clk,
@@ -25,22 +25,11 @@ reg [7:0] vmem [CH_SCREENSIZE-1:0]; // 9600x  8 bit values
 
 wire  [7:0] char_out;
 wire [71:0] char_gfx;
-fontrom fr(char_out, char_gfx);
+video_fontrom fr(char_out, char_gfx);
 
 
 assign char_out = vmem [(vm_py / CH_HEIGHT) * CH_WIDTH_SCREEN + (vm_px / CH_WIDTH)];
-// assign char_out = 8'd87;
-assign debug_curr_ch_out = char_out;
-//abcdefghijklmnopqrstuvwxyz
 
-/*
-char_x_px = vm_px / CH_WIDTH;
-char_y_px = vm_py / CH_HEIGHT;
-bit = char_y_px * CH_WIDTH + char_x_px;
-r g b = bit ? 1 : 0
-
-                int bit = (gfx >> (y * 4 + x)) & 1; 
-*/
 assign vm_r = char_gfx[((vm_py % CH_HEIGHT) * CH_WIDTH) + (vm_px % CH_WIDTH)] ? 6'b111111 : 6'b000000;
 assign vm_g = char_gfx[((vm_py % CH_HEIGHT) * CH_WIDTH) + (vm_px % CH_WIDTH)] ? 6'b111111 : 6'b000000;
 assign vm_b = char_gfx[((vm_py % CH_HEIGHT) * CH_WIDTH) + (vm_px % CH_WIDTH)] ? 6'b111111 : 6'b000000;

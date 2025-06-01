@@ -2,13 +2,10 @@
 /* verilator lint_off UNUSEDSIGNAL */
 /* verilator lint_off UNUSEDPARAM */
 
-module WithCharMemory (  
+module video_controller (  
 		input  wire clk, // should be 25Mhz, we have 21.4 tho...
 		output wire v_sync, h_sync,
-		output reg  [5:0] red, green, blue,
-		output wire [7:0] led,
-		input  wire [7:0] dip,
-		output wire [9:0] dhc, dvc 
+		output reg  [5:0] red, green, blue 
 );
 
 
@@ -25,9 +22,7 @@ parameter vfp = 511; 	// beginning of vertical front porch
 // active vertical video is therefore: 511 - 31 = 480
 
 // registers for storing the horizontal & vertical counters
-reg [9:0] hc, vc; // just for debugging
-assign dhc = hc;
-assign dvc = vc;
+reg [9:0] hc, vc; 
 
 wire vid_mem_rw;
 wire [7:0] vid_ch_out, vid_ch_in;
@@ -37,7 +32,7 @@ assign vid_ch_in = 8'd0;
 
 wire [5:0] vm_red, vm_green, vm_blue;
 
-videomem2 vm2(
+video_mem vm2(
 	px_h, px_v,
     vid_ch_in, vid_mem_rw, clk, // write to video memory... not so sure about this 
     vm_red, vm_green, vm_blue
