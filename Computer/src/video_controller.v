@@ -4,8 +4,11 @@
 
 module video_controller (  
 		input  wire clk, // should be 25Mhz, we have 21.4 tho...
-		output wire v_sync, h_sync,
-		output reg  [5:0] red, green, blue 
+		// ---- VGA SIGNAL ---- //
+		output wire v_sync, h_sync, 
+		output reg  [5:0] red, green, blue
+		// ---- CONTROL ---- //
+		 
 );
 
 
@@ -34,8 +37,8 @@ wire [5:0] vm_red, vm_green, vm_blue;
 
 video_mem vm2(
 	px_h, px_v,
-    vid_ch_in, vid_mem_rw, clk, // write to video memory... not so sure about this 
-    vm_red, vm_green, vm_blue
+    vm_red, vm_green, vm_blue,
+    vid_ch_in, vid_mem_rw, clk
 );
 
 

@@ -3,9 +3,10 @@
 /* verilator lint_off UNUSEDPARAM */
 module video_mem (
     input  wire [9:0] vm_px, vm_py, // px being scanned right now
+    output wire [5:0] vm_r, vm_g, vm_b // output rgb colors
+
     input  wire [7:0] vm_ch_in,
     input  wire       vm_ch_write_enable, write_clk,
-    output wire [5:0] vm_r, vm_g, vm_b // output rgb colors
 );
 
 parameter DISP_WIDTH_PX  = 640 + 5; // hack to fix rounding error? Makes the j not repete
@@ -52,6 +53,8 @@ initial begin
         vmem[i] = i; // ASCII for space ' '
 /* verilator lint_on WIDTH */
     end
+
+    $display("Screen size %d bytes", CH_SCREENSIZE);
 
 
     vmem [CH_SCREENSIZE-1] = 8'b11111111;
