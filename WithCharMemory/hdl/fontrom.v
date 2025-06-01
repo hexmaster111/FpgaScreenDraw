@@ -1,4 +1,4 @@
-module video_fontrom (
+module fontrom (
     input   wire [7:0]  addr,
     output  wire [71:0] charout
 );
@@ -9,7 +9,7 @@ assign charout = char_rom[addr];
 
 
 initial begin
-  $readmemb("video_font_spleen_6x12.txt",char_rom);
+  $readmemb("spleen_6x12.txt",char_rom);
 end
 
 endmodule
