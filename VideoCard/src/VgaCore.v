@@ -1,5 +1,5 @@
 
-module VideoCore (
+module VgaCore (
     input  wire i_clk_50mhz, i_n_reset,
 
     /* video outputs TODO Move this to */
