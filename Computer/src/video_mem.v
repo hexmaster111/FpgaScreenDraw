@@ -2,12 +2,12 @@
 /* verilator lint_off UNUSEDSIGNAL */
 /* verilator lint_off UNUSEDPARAM */
 module video_mem (
-    input  wire [9:0] vm_px, vm_py, // px being scanned right now
-    output wire [5:0] vm_r, vm_g, vm_b, // output rgb colors
+    input  wire [9:0]  vm_px, vm_py, // px being scanned right now
+    output wire [5:0]  vm_r, vm_g, vm_b, // output rgb colors
 
-    input  wire [7:0] vm_ch_in,
+    input  wire [7:0]  vm_ch_in,
     input  wire [12:0] vm_ch_addr,
-    input  wire       vm_ch_write_enable, write_clk
+    input  wire        vm_ch_write_enable, write_clk
     
 );
 
