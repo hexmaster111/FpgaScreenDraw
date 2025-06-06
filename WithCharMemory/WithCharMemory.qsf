@@ -88,6 +88,7 @@ set_location_assignment PIN_55 -to dip[2]
 set_location_assignment PIN_54 -to dip[1]
 set_location_assignment PIN_53 -to dip[0]
 set_location_assignment PIN_28 -to clk
+set_global_assignment -name VERILOG_FILE hdl/ClockHalfer.v
 set_global_assignment -name VERILOG_FILE hdl/videomem2.v
 set_global_assignment -name VERILOG_FILE hdl/fontrom.v
 set_global_assignment -name VERILOG_FILE hdl/WithCharMemory.v
